@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Nova venda · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>Nova venda</h1><a class="btn secondary" href="{{ url_for('sales.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div><label>Cliente</label><select name="client_id"><option value="">Venda avulsa</option>{% for client in clients %}<option value="{{ client.id }}">{{ client.name }}</option>{% endfor %}</select></div>
+  <div><label>OS vinculada</label><select name="work_order_id"><option value="">Sem OS</option>{% for os in work_orders %}<option value="{{ os.id }}">#{{ os.id }} · {{ os.client.name }} · {{ os.status }}</option>{% endfor %}</select></div>
+  <div><label>Produto</label><select name="product_id" required>{% for product in products %}<option value="{{ product.id }}">{{ product.name }} · estoque {{ product.quantity }} · R$ {{ '%.2f'|format(product.unit_price|float) }}</option>{% endfor %}</select></div>
+  <div><label>Quantidade</label><input type="number" name="quantity" value="1" min="1" required></div>
+  <div><label>Pagamento</label><select name="payment_method"><option>Pix</option><option>Cartão</option><option>Dinheiro</option><option>Boleto</option></select></div>
+  <div><label>Status</label><select name="status"><option value="PAGA">PAGA</option><option value="PENDENTE">PENDENTE</option></select></div>
+  <div class="full actions"><button>Salvar venda</button><a class="btn secondary" href="{{ url_for('sales.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

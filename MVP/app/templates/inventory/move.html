@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Movimentar estoque · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><div><h1>Movimentar estoque</h1><p class="muted">{{ product.name }} · atual: {{ product.quantity }}</p></div><a class="btn secondary" href="{{ url_for('inventory.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div><label>Tipo</label><select name="movement_type"><option value="ENTRADA">ENTRADA</option><option value="SAIDA">SAÍDA</option><option value="AJUSTE">AJUSTE DE SALDO</option></select></div>
+  <div><label>Quantidade</label><input type="number" name="quantity" min="1" required></div>
+  <div><label>Custo unitário</label><input name="unit_cost" placeholder="opcional"></div>
+  <div class="full"><label>Motivo</label><textarea name="reason" placeholder="Compra, venda, ajuste de inventário..."></textarea></div>
+  <div class="full actions"><button>Registrar</button><a class="btn secondary" href="{{ url_for('inventory.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

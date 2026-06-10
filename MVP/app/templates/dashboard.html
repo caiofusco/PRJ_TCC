@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title">
+  <div>
+    <h1>Acesso rápido</h1>
+    <p class="muted">Painel central para acompanhar agendamentos, ordens, estoque e indicadores.</p>
+  </div>
+</div>
+
+<div class="quick-actions">
+  <a class="quick-card" href="{{ url_for('clients.create') }}">Cadastro <span>＋</span></a>
+  <a class="quick-card" href="{{ url_for('appointments.create') }}">Agendar <span>▣</span></a>
+  <a class="quick-card" href="{{ url_for('work_orders.create') }}">Nova OS <span>🔧</span></a>
+  <a class="quick-card" href="{{ url_for('inventory.index') }}">Estoque <span>▦</span></a>
+  <a class="quick-card" href="{{ url_for('sales.create') }}">Venda <span>🛒</span></a>
+</div>
+
+<div class="grid grid-4">
+  <div class="kpi-card"><span class="muted">Clientes ativos</span><strong>{{ kpis.clientes }}</strong></div>
+  <div class="kpi-card"><span class="muted">Agendamentos hoje</span><strong>{{ kpis.agendamentos_hoje }}</strong></div>
+  <div class="kpi-card"><span class="muted">OS abertas</span><strong>{{ kpis.os_abertas }}</strong></div>
+  <div class="kpi-card"><span class="muted">Técnicos ativos</span><strong>{{ kpis.tecnicos }}</strong></div>
+</div>
+
+<br>
+<div class="grid grid-2">
+  <section class="panel">
+    <h2>Próximos agendamentos</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Cliente</th><th>Serviço</th><th>Técnico</th></tr></thead>
+        <tbody>
+          {% for item in upcoming %}
+            <tr>
+              <td>{{ item.scheduled_start.strftime('%d/%m/%Y %H:%M') }}</td>
+              <td>{{ item.client.name }}</td>
+              <td>{{ item.service.name }}</td>
+              <td>{{ item.technician.name }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="muted">Nenhum agendamento futuro.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Ordens em execução</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>OS</th><th>Cliente</th><th>Status</th><th>Técnico</th></tr></thead>
+        <tbody>
+          {% for os in open_orders %}
+            <tr>
+              <td><a href="{{ url_for('work_orders.detail', work_order_id=os.id) }}">#{{ os.id }}</a></td>
+              <td>{{ os.client.name }}</td>
+              <td><span class="badge warning">{{ os.status }}</span></td>
+              <td>{{ os.technician.name }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="muted">Nenhuma OS aberta.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<br>
+<div class="grid grid-2">
+  <section class="panel">
+    <h2>Alertas de estoque</h2>
+    {% if restock_suggestions %}
+      <div class="ai-results">
+        {% for item in restock_suggestions %}
+          <div class="ai-card">
+            <strong>{{ item.product_name }}</strong>
+            <span class="muted">Atual: {{ item.current_quantity }} | mínimo: {{ item.min_quantity }} | compra sugerida: {{ item.suggested_purchase_quantity }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">Nenhum produto abaixo do mínimo.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <h2>Métricas esperadas do artigo</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Indicador</th><th>Antes</th><th>Após</th><th>Ganho</th></tr></thead>
+        <tbody>
+        {% for metric in article_metrics %}
+          <tr><td>{{ metric.label }}</td><td>{{ metric.before }}</td><td>{{ metric.after }}</td><td><span class="badge success">{{ metric.gain }}</span></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

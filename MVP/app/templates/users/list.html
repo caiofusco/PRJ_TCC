@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Usuários · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title">
+  <div><h1>Usuários e técnicos</h1><p class="muted">Controle de acesso e especialidades usadas pelo módulo de IA.</p></div>
+  <a class="btn" href="{{ url_for('users.create') }}">Novo usuário</a>
+</div>
+<div class="table-wrap"><table>
+  <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Especialidades</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for user in users %}
+    <tr>
+      <td><strong>{{ user.name }}</strong></td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.role }}</td>
+      <td><span class="muted">{{ user.specialties or '-' }}</span></td>
+      <td><span class="badge {{ 'success' if user.status == 'ATIVO' else 'danger' }}">{{ user.status }}</span></td>
+      <td class="actions"><a class="btn small secondary" href="{{ url_for('users.edit', user_id=user.id) }}">Editar</a><form class="inline" method="post" action="{{ url_for('users.toggle', user_id=user.id) }}"><button class="btn small warning">Alternar</button></form></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

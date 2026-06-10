@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('services.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div><label>Nome</label><input name="name" value="{{ service.name or '' }}" required></div>
+  <div><label>Categoria</label><input name="category" value="{{ service.category or '' }}" placeholder="diagnóstico, ecu, freios..."></div>
+  <div><label>Preço base</label><input name="base_price" value="{{ service.base_price or '0.00' }}" required></div>
+  <div><label>Tempo estimado (min)</label><input type="number" name="estimated_minutes" value="{{ service.estimated_minutes or 60 }}" required></div>
+  <div><label>Status</label><select name="active"><option value="1" {{ 'selected' if service.active else '' }}>ATIVO</option><option value="0" {{ 'selected' if not service.active else '' }}>INATIVO</option></select></div>
+  <div class="full"><label>Descrição</label><textarea name="description">{{ service.description or '' }}</textarea></div>
+  <div class="full actions"><button>Salvar</button><a class="btn secondary" href="{{ url_for('services.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

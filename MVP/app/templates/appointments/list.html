@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Agendamentos · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title">
+  <div><h1>Agendamentos</h1><p class="muted">Agenda automatizada com apoio da IA para reduzir conflitos.</p></div>
+  <a class="btn" href="{{ url_for('appointments.create') }}">Novo agendamento</a>
+</div>
+<form class="search-bar" method="get">
+  <select name="status">
+    <option value="">Todos os status</option>
+    {% for s in ['AGENDADO','CONFIRMADO','EM_ANDAMENTO','CONCLUIDA','CANCELADO'] %}<option value="{{ s }}" {{ 'selected' if status == s else '' }}>{{ s }}</option>{% endfor %}
+  </select>
+  <button class="btn secondary">Filtrar</button>
+</form>
+<div class="table-wrap"><table>
+  <thead><tr><th>Data</th><th>Cliente/Veículo</th><th>Serviço</th><th>Técnico</th><th>Status</th><th>IA</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for item in appointments %}
+    <tr>
+      <td>{{ item.scheduled_start.strftime('%d/%m/%Y %H:%M') }}<br><span class="muted">{{ item.duration_minutes }} min</span></td>
+      <td><strong>{{ item.client.name }}</strong><br><span class="muted">{{ item.vehicle.label }}</span></td>
+      <td>{{ item.service.name }}</td>
+      <td>{{ item.technician.name }}</td>
+      <td><span class="badge {{ 'danger' if item.status == 'CANCELADO' else 'success' if item.status == 'CONCLUIDA' else 'warning' }}">{{ item.status }}</span></td>
+      <td>{% if item.ai_score %}<span class="badge success">Score {{ item.ai_score }}</span><br><span class="muted">{{ item.ai_reason }}</span>{% else %}<span class="muted">Manual</span>{% endif %}</td>
+      <td class="actions">
+        <a class="btn small secondary" href="{{ url_for('appointments.edit', appointment_id=item.id) }}">Editar</a>
+        {% if not item.work_order %}<form class="inline" method="post" action="{{ url_for('appointments.create_work_order', appointment_id=item.id) }}"><button class="btn small">Criar OS</button></form>{% else %}<a class="btn small ghost" href="{{ url_for('work_orders.detail', work_order_id=item.work_order.id) }}">Ver OS</a>{% endif %}
+        <form class="inline" method="post" action="{{ url_for('appointments.set_status', appointment_id=item.id, status='CANCELADO') }}"><button class="btn small danger">Cancelar</button></form>
+      </td>
+    </tr>
+  {% else %}<tr><td colspan="7" class="muted">Nenhum agendamento encontrado.</td></tr>{% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

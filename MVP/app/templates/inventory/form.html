@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('inventory.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div><label>Nome</label><input name="name" value="{{ product.name or '' }}" required></div>
+  <div><label>Preço unitário</label><input name="unit_price" value="{{ product.unit_price or '0.00' }}" required></div>
+  <div><label>Quantidade atual</label><input type="number" name="quantity" value="{{ product.quantity or 0 }}" required></div>
+  <div><label>Quantidade mínima</label><input type="number" name="min_quantity" value="{{ product.min_quantity or 1 }}" required></div>
+  <div><label>Status</label><select name="active"><option value="1" {{ 'selected' if product.active else '' }}>ATIVO</option><option value="0" {{ 'selected' if not product.active else '' }}>INATIVO</option></select></div>
+  <div class="full"><label>Descrição</label><textarea name="description">{{ product.description or '' }}</textarea></div>
+  <div class="full actions"><button>Salvar</button><a class="btn secondary" href="{{ url_for('inventory.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

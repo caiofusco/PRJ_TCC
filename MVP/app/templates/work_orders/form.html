@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('work_orders.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div>
+    <label>Cliente</label>
+    <select name="client_id" id="client_id" required>
+      <option value="">Selecione...</option>
+      {% for client in clients %}<option value="{{ client.id }}" {{ 'selected' if work_order.client_id == client.id else '' }}>{{ client.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Veículo</label>
+    <select name="vehicle_id" id="vehicle_id" data-current="{{ work_order.vehicle_id or '' }}" required>
+      <option value="">Selecione...</option>
+      {% for vehicle in vehicles %}<option value="{{ vehicle.id }}" {{ 'selected' if work_order.vehicle_id == vehicle.id else '' }}>{{ vehicle.label }} · {{ vehicle.client.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Serviço principal</label>
+    <select name="main_service_id" required>
+      <option value="">Selecione...</option>
+      {% for service in services %}<option value="{{ service.id }}" {{ 'selected' if work_order.main_service_id == service.id else '' }}>{{ service.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Técnico</label>
+    <select name="technician_id" required>
+      <option value="">Selecione...</option>
+      {% for tech in technicians %}<option value="{{ tech.id }}" {{ 'selected' if work_order.technician_id == tech.id else '' }}>{{ tech.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Status</label>
+    <select name="status">{% for s in ['ABERTA','EM_ANDAMENTO','CONCLUIDA','CANCELADA'] %}<option value="{{ s }}" {{ 'selected' if work_order.status == s else '' }}>{{ s }}</option>{% endfor %}</select>
+  </div>
+  <div>
+    <label>Total de peças/produtos</label>
+    <input name="parts_total" value="{{ work_order.parts_total or '0.00' }}">
+  </div>
+  <div class="full"><label>Problema relatado</label><textarea name="problem_description" required>{{ work_order.problem_description or '' }}</textarea></div>
+  <div class="full"><label>Diagnóstico técnico</label><textarea name="diagnosis">{{ work_order.diagnosis or '' }}</textarea></div>
+  <div class="full actions"><button>Salvar OS</button><a class="btn secondary" href="{{ url_for('work_orders.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

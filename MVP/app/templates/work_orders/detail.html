@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}OS #{{ work_order.id }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title">
+  <div>
+    <h1>OS #{{ work_order.id }}</h1>
+    <p class="muted">{{ work_order.client.name }} · {{ work_order.vehicle.label }}</p>
+  </div>
+  <div class="actions">
+    <a class="btn secondary" href="{{ url_for('work_orders.edit', work_order_id=work_order.id) }}">Editar</a>
+    <a class="btn secondary" href="{{ url_for('work_orders.index') }}">Voltar</a>
+  </div>
+</div>
+<div class="grid grid-2">
+  <section class="panel">
+    <h2>Dados da ordem</h2>
+    <p><strong>Status:</strong> <span class="badge warning">{{ work_order.status }}</span></p>
+    <p><strong>Abertura:</strong> {{ work_order.opening_date.strftime('%d/%m/%Y %H:%M') }}</p>
+    {% if work_order.closing_date %}<p><strong>Conclusão:</strong> {{ work_order.closing_date.strftime('%d/%m/%Y %H:%M') }} · {{ work_order.execution_minutes }} min</p>{% endif %}
+    <p><strong>Técnico:</strong> {{ work_order.technician.name }}</p>
+    <p><strong>Problema:</strong><br>{{ work_order.problem_description }}</p>
+    <p><strong>Diagnóstico:</strong><br>{{ work_order.diagnosis or '-' }}</p>
+    <div class="status-row">
+      {% for s in ['ABERTA','EM_ANDAMENTO','CONCLUIDA','CANCELADA'] %}
+      <form method="post" action="{{ url_for('work_orders.set_status', work_order_id=work_order.id, status=s) }}"><button class="btn small {{ 'danger' if s == 'CANCELADA' else 'secondary' }}" type="submit">{{ s }}</button></form>
+      {% endfor %}
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Resumo financeiro</h2>
+    <p><strong>Mão de obra:</strong> R$ {{ '%.2f'|format(work_order.labor_total|float) }}</p>
+    <p><strong>Peças/produtos:</strong> R$ {{ '%.2f'|format(work_order.parts_total|float) }}</p>
+    <p><strong>Total:</strong> <span class="ai-score">R$ {{ '%.2f'|format(work_order.total_value|float) }}</span></p>
+    {% if work_order.sale %}<p><a class="btn secondary" href="{{ url_for('sales.detail', sale_id=work_order.sale.id) }}">Ver venda vinculada</a></p>{% else %}<p><a class="btn" href="{{ url_for('sales.create') }}">Gerar venda</a></p>{% endif %}
+  </section>
+</div>
+<br>
+<section class="panel">
+  <h2>Serviços da OS</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Serviço</th><th>Qtd</th><th>Valor unit.</th><th>Total</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for item in work_order.items %}
+        <tr>
+          <td>{{ item.service.name }}</td><td>{{ item.quantity }}</td><td>R$ {{ '%.2f'|format(item.unit_price|float) }}</td><td>R$ {{ '%.2f'|format(item.total|float) }}</td>
+          <td><form class="inline" method="post" action="{{ url_for('work_orders.remove_item', work_order_id=work_order.id, item_id=item.id) }}"><button class="btn small danger">Remover</button></form></td>
+        </tr>
+      {% else %}<tr><td colspan="5" class="muted">Nenhum serviço adicionado.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <br>
+  <form method="post" action="{{ url_for('work_orders.add_item', work_order_id=work_order.id) }}" class="form-grid">
+    <div><label>Serviço</label><select name="service_id" required>{% for service in services %}<option value="{{ service.id }}">{{ service.name }}</option>{% endfor %}</select></div>
+    <div><label>Quantidade</label><input type="number" name="quantity" value="1" min="1"></div>
+    <div><label>Valor unitário</label><input name="unit_price" placeholder="usar preço do cadastro se vazio"></div>
+    <div class="actions"><button>Adicionar item</button></div>
+  </form>
+</section>
+{% endblock %}

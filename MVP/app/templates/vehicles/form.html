@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('vehicles.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div>
+    <label>Cliente</label>
+    <select name="client_id" id="client_id" required>
+      <option value="">Selecione...</option>
+      {% for client in clients %}<option value="{{ client.id }}" {{ 'selected' if vehicle.client_id == client.id else '' }}>{{ client.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Placa</label><input name="plate" value="{{ vehicle.plate or '' }}" required>
+  </div>
+  <div>
+    <label>Marca</label><input name="brand" value="{{ vehicle.brand or '' }}" required>
+  </div>
+  <div>
+    <label>Modelo</label><input name="model" value="{{ vehicle.model or '' }}" required>
+  </div>
+  <div>
+    <label>Ano</label><input type="number" name="year" value="{{ vehicle.year or '' }}">
+  </div>
+  <div>
+    <label>Cor</label><input name="color" value="{{ vehicle.color or '' }}">
+  </div>
+  <div class="full actions"><button>Salvar</button><a class="btn secondary" href="{{ url_for('vehicles.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('clients.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div>
+    <label>Nome</label>
+    <input name="name" value="{{ client.name or '' }}" required>
+  </div>
+  <div>
+    <label>CPF/CNPJ</label>
+    <input name="cpf_cnpj" value="{{ client.cpf_cnpj or '' }}">
+  </div>
+  <div>
+    <label>Telefone</label>
+    <input name="phone" value="{{ client.phone or '' }}">
+  </div>
+  <div>
+    <label>E-mail</label>
+    <input type="email" name="email" value="{{ client.email or '' }}">
+  </div>
+  <div class="full">
+    <label>Endereço</label>
+    <input name="address" value="{{ client.address or '' }}">
+  </div>
+  <div>
+    <label>Status</label>
+    <select name="status">
+      <option value="ATIVO" {{ 'selected' if client.status == 'ATIVO' else '' }}>ATIVO</option>
+      <option value="INATIVO" {{ 'selected' if client.status == 'INATIVO' else '' }}>INATIVO</option>
+    </select>
+  </div>
+  <div class="full actions"><button type="submit">Salvar</button><a class="btn secondary" href="{{ url_for('clients.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

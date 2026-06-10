@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><div><h1>{{ title }}</h1><p class="muted">Use o botão de IA para receber horários sugeridos com técnico e justificativa.</p></div><a class="btn secondary" href="{{ url_for('appointments.index') }}">Voltar</a></div>
+<div class="grid grid-2">
+  <form method="post" class="panel form-grid">
+    <div>
+      <label>Cliente</label>
+      <select name="client_id" id="client_id" required>
+        <option value="">Selecione...</option>
+        {% for client in clients %}<option value="{{ client.id }}" {{ 'selected' if appointment.client_id == client.id else '' }}>{{ client.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Veículo</label>
+      <select name="vehicle_id" id="vehicle_id" data-current="{{ appointment.vehicle_id or '' }}" required>
+        <option value="">Selecione...</option>
+        {% for vehicle in vehicles %}<option value="{{ vehicle.id }}" {{ 'selected' if appointment.vehicle_id == vehicle.id else '' }}>{{ vehicle.label }} · {{ vehicle.client.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Serviço</label>
+      <select name="service_id" id="service_id" required>
+        <option value="">Selecione...</option>
+        {% for service in services %}<option value="{{ service.id }}" {{ 'selected' if appointment.service_id == service.id else '' }}>{{ service.name }} ({{ service.estimated_minutes }} min)</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Técnico</label>
+      <select name="technician_id" id="technician_id" required>
+        <option value="">Selecione...</option>
+        {% for tech in technicians %}<option value="{{ tech.id }}" {{ 'selected' if appointment.technician_id == tech.id else '' }}>{{ tech.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Data e hora</label>
+      <input id="scheduled_start" type="datetime-local" name="scheduled_start" value="{{ appointment.scheduled_start.strftime('%Y-%m-%dT%H:%M') if appointment.scheduled_start else '' }}" required>
+    </div>
+    <div>
+      <label>Duração em minutos</label>
+      <input id="duration_minutes" type="number" name="duration_minutes" value="{{ appointment.duration_minutes if appointment.scheduled_start else '' }}" placeholder="IA ou tempo do serviço">
+    </div>
+    <div>
+      <label>Status</label>
+      <select name="status">
+        {% for s in ['AGENDADO','CONFIRMADO','EM_ANDAMENTO','CONCLUIDA','CANCELADO'] %}<option value="{{ s }}" {{ 'selected' if appointment.status == s else '' }}>{{ s }}</option>{% endfor %}
+      </select>
+    </div>
+    {% if not appointment.id %}
+    <div>
+      <label>Criar OS automaticamente?</label>
+      <select name="make_os"><option value="0">Não</option><option value="1">Sim</option></select>
+    </div>
+    {% endif %}
+    <div class="full"><label>Observações</label><textarea name="notes">{{ appointment.notes or '' }}</textarea></div>
+    <input type="hidden" id="ai_score" name="ai_score" value="{{ appointment.ai_score or '' }}">
+    <input type="hidden" id="ai_reason" name="ai_reason" value="{{ appointment.ai_reason or '' }}">
+    <div class="full actions"><button>Salvar agendamento</button><a class="btn secondary" href="{{ url_for('appointments.index') }}">Cancelar</a></div>
+  </form>
+
+  <aside class="panel">
+    <h2>Assistente IA</h2>
+    <p class="muted">Analisa histórico de execução, disponibilidade e especialidade dos técnicos.</p>
+    <label>Começar a buscar a partir de</label>
+    <input id="ai_start_date" type="date">
+    <br><br>
+    <button type="button" id="aiSuggestBtn">Gerar sugestões de horário</button>
+    <div id="aiResults" class="ai-results"></div>
+  </aside>
+</div>
+{% endblock %}

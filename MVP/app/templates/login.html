@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Login · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="login-shell">
+  <div class="card login-card">
+    <h1>Oficina AI</h1>
+    <p class="muted">Sistema web para serviços automotivos com apoio de inteligência artificial.</p>
+    <form method="post" class="grid">
+      <div>
+        <label for="email">E-mail</label>
+        <input id="email" type="email" name="email" required placeholder="admin@oficina.local">
+      </div>
+      <div>
+        <label for="password">Senha</label>
+        <input id="password" type="password" name="password" required placeholder="admin123">
+      </div>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="footer-note">Acesso demo: admin@oficina.local / admin123</p>
+  </div>
+</div>
+{% endblock %}

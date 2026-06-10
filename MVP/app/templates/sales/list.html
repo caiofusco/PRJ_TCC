@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Vendas · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title">
+  <div><h1>Vendas</h1><p class="muted">Registre vendas de produtos e atualize o estoque automaticamente.</p></div>
+  <a class="btn" href="{{ url_for('sales.create') }}">Nova venda</a>
+</div>
+<div class="table-wrap"><table>
+  <thead><tr><th>Venda</th><th>Data</th><th>Cliente</th><th>OS</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+  {% for sale in sales %}
+    <tr>
+      <td>#{{ sale.id }}</td>
+      <td>{{ sale.date.strftime('%d/%m/%Y %H:%M') }}</td>
+      <td>{{ sale.client.name if sale.client else '-' }}</td>
+      <td>{% if sale.work_order %}<a href="{{ url_for('work_orders.detail', work_order_id=sale.work_order.id) }}">#{{ sale.work_order.id }}</a>{% else %}-{% endif %}</td>
+      <td>R$ {{ '%.2f'|format(sale.total_value|float) }}</td>
+      <td><span class="badge success">{{ sale.status }}</span></td>
+      <td><a class="btn small secondary" href="{{ url_for('sales.detail', sale_id=sale.id) }}">Abrir</a></td>
+    </tr>
+  {% else %}<tr><td colspan="7" class="muted">Nenhuma venda registrada.</td></tr>{% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}

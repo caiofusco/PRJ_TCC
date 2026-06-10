@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Venda #{{ sale.id }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><div><h1>Venda #{{ sale.id }}</h1><p class="muted">{{ sale.date.strftime('%d/%m/%Y %H:%M') }}</p></div><a class="btn secondary" href="{{ url_for('sales.index') }}">Voltar</a></div>
+<div class="grid grid-2">
+  <section class="panel">
+    <h2>Resumo</h2>
+    <p><strong>Cliente:</strong> {{ sale.client.name if sale.client else 'Venda avulsa' }}</p>
+    <p><strong>OS:</strong> {% if sale.work_order %}<a class="logout" href="{{ url_for('work_orders.detail', work_order_id=sale.work_order.id) }}">#{{ sale.work_order.id }}</a>{% else %}-{% endif %}</p>
+    <p><strong>Pagamento:</strong> {{ sale.payment_method or '-' }}</p>
+    <p><strong>Status:</strong> <span class="badge success">{{ sale.status }}</span></p>
+    <p><strong>Total:</strong> <span class="ai-score">R$ {{ '%.2f'|format(sale.total_value|float) }}</span></p>
+  </section>
+  <section class="panel">
+    <h2>Itens</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Produto</th><th>Qtd</th><th>Unitário</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for item in sale.items %}<tr><td>{{ item.product.name }}</td><td>{{ item.quantity }}</td><td>R$ {{ '%.2f'|format(item.unit_price|float) }}</td><td>R$ {{ '%.2f'|format(item.total|float) }}</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock %}

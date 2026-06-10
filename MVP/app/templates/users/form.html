@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-title"><h1>{{ title }}</h1><a class="btn secondary" href="{{ url_for('users.index') }}">Voltar</a></div>
+<form method="post" class="panel form-grid">
+  <div><label>Nome</label><input name="name" value="{{ user.name or '' }}" required></div>
+  <div><label>E-mail</label><input type="email" name="email" value="{{ user.email or '' }}" required></div>
+  <div><label>Senha {% if user.id %}<span class="muted">(preencha só para alterar)</span>{% endif %}</label><input type="password" name="password"></div>
+  <div><label>Perfil</label><select name="role"><option value="ADMIN" {{ 'selected' if user.role == 'ADMIN' else '' }}>ADMIN</option><option value="ATENDENTE" {{ 'selected' if user.role == 'ATENDENTE' else '' }}>ATENDENTE</option><option value="TECNICO" {{ 'selected' if user.role == 'TECNICO' else '' }}>TECNICO</option></select></div>
+  <div><label>Status</label><select name="status"><option value="ATIVO" {{ 'selected' if user.status == 'ATIVO' else '' }}>ATIVO</option><option value="INATIVO" {{ 'selected' if user.status == 'INATIVO' else '' }}>INATIVO</option></select></div>
+  <div class="full"><label>Especialidades do técnico</label><textarea name="specialties" placeholder="diagnóstico eletrônico, remap, injeção...">{{ user.specialties or '' }}</textarea></div>
+  <div class="full actions"><button>Salvar</button><a class="btn secondary" href="{{ url_for('users.index') }}">Cancelar</a></div>
+</form>
+{% endblock %}
